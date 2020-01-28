@@ -1,0 +1,381 @@
+{% load leaflet_tags %}
+<html>
+
+<head>
+  {% leaflet_js %}
+  {% leaflet_css %}
+  <style>
+    .leaflet-container {
+      height: 100%;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+  <script type="text/javascript">
+    
+    stations_data = []
+    var betaXLayer
+    var betaYLayer
+    var betaZLayer
+    var customControlX =  L.Control.extend({
+      
+      options: {
+        position: 'topright'
+      },
+      
+      onAdd: function (map) {
+        var container = L.DomUtil.create('input');
+        container.type="button";
+        container.title="beta X";
+        container.value = "X";
+        
+        container.style.backgroundColor = 'white';     
+        //container.style.backgroundImage = "url(https://t1.gstatic.com/images?q=tbn:ANd9GcR6FCUMW5bPn8C4PbKak2BJQQsmC-K9-mbYBeFZm1ZM2w2GRy40Ew)";
+        container.style.backgroundSize = "30px 30px";
+        container.style.width = '30px';
+        container.style.height = '30px';
+        
+        container.onmouseover = function(){
+          container.style.backgroundColor = 'pink'; 
+        }
+        container.onmouseout = function(){
+          container.style.backgroundColor = 'white'; 
+        }
+        
+        container.onclick = function(){
+          clearMap(map)
+          let collection = turf.featureCollection(stations_data);
+          // Create a grid containing interpolated collection values
+          let weight = 4.5
+          let options = {gridType: 'points', property: 'betaX', units: 'kilometers', weight: weight};
+          let breaks = breaks_list.Variations.Total
+          let grid = turf.interpolate(collection, 200, options);
+          let lines = turf.isolines(grid, breaks, {zProperty: 'betaX'});
+          var myStyle = {
+            "color": "#575A5D",
+            "weight": 2,
+            "opacity": 0.65
+          };
+          let betaXLayer = L.geoJSON(lines, {
+            style: myStyle
+          }).addTo(map);
+        }
+        
+        return container;
+      }
+    });
+    var customControlY =  L.Control.extend({
+      
+      options: {
+        position: 'topright'
+      },
+      
+      onAdd: function (map) {
+        var container = L.DomUtil.create('input');
+        container.type="button";
+        container.title="beta Y";
+        container.value = "Y";
+        
+        container.style.backgroundColor = 'white';     
+        //container.style.backgroundImage = "url(https://t1.gstatic.com/images?q=tbn:ANd9GcR6FCUMW5bPn8C4PbKak2BJQQsmC-K9-mbYBeFZm1ZM2w2GRy40Ew)";
+        container.style.backgroundSize = "30px 30px";
+        container.style.width = '30px';
+        container.style.height = '30px';
+        
+        container.onmouseover = function(){
+          container.style.backgroundColor = 'pink'; 
+        }
+        container.onmouseout = function(){
+          container.style.backgroundColor = 'white'; 
+        }
+        
+        container.onclick = function(){
+          clearMap(map)
+          let collection = turf.featureCollection(stations_data);
+          // Create a grid containing interpolated collection values
+          let weight = 4.5
+          let options = {gridType: 'points', property: 'betaY', units: 'kilometers', weight: weight};
+          let breaks = breaks_list.Variations.Total
+          let grid = turf.interpolate(collection, 200, options);
+          let lines = turf.isolines(grid, breaks, {zProperty: 'betaY'});
+          var myStyle = {
+            "color": "#575A5D",
+            "weight": 2,
+            "opacity": 0.65
+          };
+          let betaYLayer = L.geoJSON(lines, {
+            style: myStyle
+          }).addTo(map);
+        }
+        
+        return container;
+      }
+    });
+    var customControlZ =  L.Control.extend({
+      
+      options: {
+        position: 'topright'
+      },
+      
+      onAdd: function (map) {
+        var container = L.DomUtil.create('input');
+        container.type="button";
+        container.title="beta Z";
+        container.value = "Z";
+        
+        container.style.backgroundColor = 'white';     
+        //container.style.backgroundImage = "url(https://t1.gstatic.com/images?q=tbn:ANd9GcR6FCUMW5bPn8C4PbKak2BJQQsmC-K9-mbYBeFZm1ZM2w2GRy40Ew)";
+        container.style.backgroundSize = "30px 30px";
+        container.style.width = '30px';
+        container.style.height = '30px';
+        
+        container.onmouseover = function(){
+          container.style.backgroundColor = 'pink'; 
+        }
+        container.onmouseout = function(){
+          container.style.backgroundColor = 'white'; 
+        }
+        
+        container.onclick = function(){
+          clearMap(map)
+          let collection = turf.featureCollection(stations_data);
+          // Create a grid containing interpolated collection values
+          let weight = 4.5
+          let options = {gridType: 'points', property: 'betaZ', units: 'kilometers', weight: weight};
+          let breaks = breaks_list.Variations.Total
+          let grid = turf.interpolate(collection, 200, options);
+          let lines = turf.isolines(grid, breaks, {zProperty: 'betaZ'});
+          var myStyle = {
+            "color": "#575A5D",
+            "weight": 2,
+            "opacity": 0.65
+          };
+          let betaZLayer = L.geoJSON(lines, {
+            style: myStyle
+          }).addTo(map);
+        }
+        
+        return container;
+      }
+    });
+    // Modification of the Turf.js library function
+    turf.pointGrid = function(bbox, cellSide, options)
+    {
+      // Default parameters
+      if (options.mask && !options.units) options.units = 'kilometers';
+      
+      // Containers
+      var results = [];
+      bbox = [-180, -90, 180, 90]
+      var west = bbox[0];
+      var south = bbox[1];
+      var east = bbox[2];
+      var north = bbox[3];
+      
+      var xFraction = cellSide / ((this.distance([0-(180-east), south+north], [east, south+north], options)*2));
+      var cellWidth = xFraction * (east - west);
+      var yFraction = cellSide / (this.distance([west, south], [west, north], options));
+      var cellHeight = yFraction * (north - south);
+      
+      var bboxWidth = (east - west);
+      var bboxHeight = (north - south);
+      var columns = Math.floor(bboxWidth / cellWidth);
+      var rows = Math.floor(bboxHeight / cellHeight);
+      
+      // adjust origin of the grid
+      var deltaX = (bboxWidth - columns * cellWidth) / 2;
+      var deltaY = (bboxHeight - rows * cellHeight) / 2;
+      
+      var currentX = west + deltaX;
+      while (currentX <= east) {
+        var currentY = south + deltaY;
+        while (currentY <= north) {
+          var cellPt = this.point([currentX, currentY], options.properties);
+          if (options.mask) {
+            if (this.within(cellPt, options.mask)) results.push(cellPt);
+          } else {
+            results.push(cellPt);
+          }
+          currentY += cellHeight;
+        }
+        currentX += cellWidth;
+      }
+      
+      return this.featureCollection(results);
+    }
+    
+    turf.interpolate = function(points, cellSize, options)
+    {
+      // Optional parameters
+      options = options || {};
+      if (typeof options !== 'object') throw new Error('options is invalid');
+      var gridType = options.gridType;
+      var property = options.property;
+      var weight = options.weight;
+      
+      // validation
+      if (!points) throw new Error('points is required');
+      this.collectionOf(points, 'Point', 'input must contain Points');
+      if (!cellSize) throw new Error('cellSize is required');
+      if (weight !== undefined && typeof weight !== 'number') throw new Error('weight must be a number');
+      
+      // default values
+      property = property || 'elevation';
+      gridType = gridType || 'square';
+      weight = weight || 1;
+      
+      var box = this.bbox(points);
+      var grid;
+      switch (gridType) {
+        case 'point':
+        case 'points':
+        grid = this.pointGrid(box, cellSize, options);
+        break;
+        case 'square':
+        case 'squares':
+        grid = this.squareGrid(box, cellSize, options);
+        break;
+        case 'hex':
+        case 'hexes':
+        grid = this.hexGrid(box, cellSize, options);
+        break;
+        case 'triangle':
+        case 'triangles':
+        grid = this.triangleGrid(box, cellSize, options);
+        break;
+        default:
+        throw new Error('invalid gridType');
+      }
+      var results = [];
+      this.featureEach(grid, function (gridFeature) {
+        var zw = 0; // Сумма значений
+        var sw = 0; // Сумма взвешенных расстояний
+        // calculate the distance from each input point to the grid points
+        turf.featureEach(points, function (point) {
+          var gridPoint = (gridType === 'point') ? gridFeature : turf.centroid(gridFeature);
+          var d = turf.distance(gridPoint, point, options);
+          var zValue;
+          // property has priority for zValue, fallbacks to 3rd coordinate from geometry
+          if (property !== undefined) zValue = point.properties[property];
+          if (zValue === undefined) zValue = point.geometry.coordinates[2];
+          if (zValue === undefined) throw new Error('zValue is missing');
+          if (d === 0) zw = zValue;
+          var w = 1.0 / Math.pow(d, weight);
+          sw += w;
+          zw += w * zValue;
+        });
+        // write interpolated value for each grid point
+        var newFeature = turf.clone(gridFeature);
+        newFeature.properties[property] = zw / sw;
+        results.push(newFeature);
+      });
+      return turf.featureCollection(results);
+    }
+    
+    
+    var breaks_list = {};
+    
+    breaks_list.Variations = {};
+    
+    breaks_list.Variations.Total = [0,2,4,10,25,50,100,200, 300,350,400,500,600,700,800,900, 1000,1200,1400,1600,1800,2000];
+    breaks_list.Variations.Total.b1 = 300;
+    breaks_list.Variations.Total.b2 = 1000;
+    
+    breaks_list.Variations.North = [0,2,4,10,25,50,100,200, 300,400,500,600,700,800,900, 1000,1200,1300,1400,1500,1600,1800,2000];
+    breaks_list.Variations.North.b1 = 300;
+    breaks_list.Variations.North.b2 = 1000;
+    
+    breaks_list.Variations.East = [0,2,10,50,100,200, 300,400,500,700,800,1000,1200,1400,1500,1600,1800,2000];
+    breaks_list.Variations.East.b1 = 300;
+    breaks_list.Variations.East.b2 = 1000;
+    
+    breaks_list.Variations.Vertical = [0,2,10,50,100,200, 300,400,500,700,1000,1200,1400,1500,1600,1800,2000];
+    breaks_list.Variations.Vertical.b1 = 300;
+    breaks_list.Variations.Vertical.b2 = 1000;
+    
+    breaks_list.Rate = {};
+    
+    breaks_list.Rate.Total = [0,2,4,10,15,30,40,60,100,150,200,300,400,500,600,700];
+    breaks_list.Rate.Total.b1 = 100;
+    breaks_list.Rate.Total.b2 = 300;
+    
+    breaks_list.Rate.North = [0,2,4,10,20,30,40,50,65,80,100,120,150,200,300,400,500,600,700];
+    breaks_list.Rate.North.b1 = 100;
+    breaks_list.Rate.North.b2 = 300;
+    
+    breaks_list.Rate.East = [0,2,4,10,20,40,70,100,150,200,300,400,500,600,700];
+    breaks_list.Rate.East.b1 = 100;
+    breaks_list.Rate.East.b2 = 300;
+    
+    breaks_list.Rate.Vertical = [0,2,4,10,20,40,60,80,100,120,150,200,300,400,500,600,700];
+    breaks_list.Rate.Vertical.b1 = 100;
+    breaks_list.Rate.Vertical.b2 = 300;
+    
+    
+    var dataurl = '/get_stations_js';
+    
+    window.addEventListener("map:init", function (event) {
+      var map = event.detail.map;
+      map.addControl(new customControlX());
+      map.addControl(new customControlY());
+      map.addControl(new customControlZ());
+      
+      // var layer = L.geoJson();
+      // map.addLayer(layer);
+      
+      
+      $.getJSON("get_stations_js", function (data) {
+        // layer.addData(data);
+        stations = JSON.parse(data.data);
+        stations.forEach(station => {
+          stations_data.push(turf.point([station.fields.Longitude, station.fields.Latitude, station.fields.Elevation], {"betaX": station.fields.BetaX, "betaY": station.fields.BetaY, "betaZ": station.fields.BetaZ}))
+          var marker = L.marker([station.fields.Latitude, station.fields.Longitude], {title: station.fields.StationName}).addTo(map)
+          .bindPopup('Станция: ' + station.fields.StationName + 
+          '<br>IAGACode: ' + station.fields.IAGACode +
+          '<br>Elevation: ' + station.fields.Elevation +
+          '<br>betaX: ' + station.fields.BetaX +
+          '<br>betaY: ' + station.fields.BetaY +
+          '<br>betaZ: ' + station.fields.BetaZ +
+          '<br><a href="world/' + station.fields.IAGACode + '">Открыть график</a>');
+        });
+        
+        let collection = turf.featureCollection(stations_data);
+        // Create a grid containing interpolated collection values
+        let weight = 4.5
+        let options = {gridType: 'points', property: 'betaX', units: 'kilometers', weight: weight};
+        let breaks = breaks_list.Variations.Total
+        let grid = turf.interpolate(collection, 200, options);
+        let lines = turf.isolines(grid, breaks, {zProperty: 'betaX'});
+        var myStyle = {
+          "color": "#575A5D",
+          "weight": 2,
+          "opacity": 0.65
+        };
+        let betaXLayer = L.geoJSON(lines, {
+          style: myStyle
+        }).addTo(map);
+      });
+      
+    });
+
+    function clearMap(map) {
+    for(i in map._layers) {
+        if(map._layers[i]._path != undefined) {
+            try {
+                map.removeLayer(map._layers[i]);
+            }
+            catch(e) {
+                console.log("problem with " + e + map._layers[i]);
+            }
+        }
+    }
+}
+  </script>
+</head>
+
+<body>
+  <h1>Станции</h1>
+  {% leaflet_map "main" %}
+</body>
+
+</html>

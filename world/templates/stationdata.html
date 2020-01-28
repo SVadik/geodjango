@@ -1,0 +1,47 @@
+<html>
+
+<head>
+  <style>
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    // var marker = L.marker([51.5, -0.09]).addTo(map);
+    // var stationCode = ''
+    // function DoSomethingWithEntries(zip) {
+    //   // for each entry in the zip...
+    //   for (var i = 0; i < zip.entries.length; i++) {
+    //     var entry = zip.entries[i];
+    //     var entryInfo = "<h4><a>" + entry.name + "</a></h4>\n<div>";
+    //     // put that into a div, if you like.
+    //     // etc...
+    //   }
+    // }
+    // $.get('/' + stationCode, function (data, status) {
+    //   alert("Data: " + data + "\nStatus: " + status);
+    //   // var doneReading = function (zip) {
+    //   //   DoSomethingWithEntries(zip);
+    //   // };
+    //   // var zipFile = new ZipFile(url, doneReading);
+    //   $('#x').attr('src', 'data:image/png;base64,' + data)
+    // });
+    function gethistogram(a) {
+      fetch("http://127.0.0.1:8000" + '{{ load_station_histogram_image }}')
+        .then(res => { return res.blob() })
+        .then(blob => {
+          var img = URL.createObjectURL(blob);
+          // Do whatever with the img
+          document.getElementById(a).setAttribute('src', img);
+        })
+    }
+    gethistogram('X')
+  </script>
+</head>
+
+<body>
+  <div>
+    <h2>Значения X Y Z</h2>
+    <img id="X" src="https://i.stack.imgur.com/h6viz.gif">
+  </div>
+</body>
+
+</html>
