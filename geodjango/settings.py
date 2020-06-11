@@ -104,8 +104,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'geodjango',
-        'USER' : 'geo',
-        'PASSWORD' : 'aaa6c650',
+        'USER' : 'geo',#svadik_geo
+        'PASSWORD' : 'aaa6c650',# &yaDa5Zc
         'HOST' : '127.0.0.1',
         'PORT' : '5432',
     }

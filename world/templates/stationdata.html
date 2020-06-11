@@ -1,6 +1,7 @@
 <html>
 
 <head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <style>
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -24,23 +25,35 @@
     //   // var zipFile = new ZipFile(url, doneReading);
     //   $('#x').attr('src', 'data:image/png;base64,' + data)
     // });
-    function gethistogram(a) {
-      fetch("http://127.0.0.1:8000" + '{{ load_station_histogram_image }}')
-        .then(res => { return res.blob() })
-        .then(blob => {
-          var img = URL.createObjectURL(blob);
-          // Do whatever with the img
-          document.getElementById(a).setAttribute('src', img);
-        })
-    }
-    gethistogram('X')
+    // function gethistogram(a) {
+    //   fetch("http://127.0.0.1:8000" + '{{ load_station_histogram_image }}')
+    //     .then(res => { return res.blob() })
+    //     .then(blob => {
+    //       var img = URL.createObjectURL(blob);
+    //       // Do whatever with the img
+    //       document.getElementById(a).setAttribute('src', img);
+    //     })
+    // }
+    // gethistogram('X')
   </script>
 </head>
 
 <body>
   <div>
     <h2>Значения X Y Z</h2>
-    <img id="X" src="https://i.stack.imgur.com/h6viz.gif">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <img id="X" src="https://i.stack.imgur.com/h6viz.gif">
+        </div>
+        <div class="col-sm">
+          <img id="Y" src="https://i.stack.imgur.com/h6viz.gif">
+        </div>
+        <div class="col-sm">
+          <img id="Z" src="https://i.stack.imgur.com/h6viz.gif">
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 
