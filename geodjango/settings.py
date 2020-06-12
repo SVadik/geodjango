@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-
+import django_heroku
 # if os.name == 'nt':
 #     import platform
 #     OSGEO4W = r"C:\OSGeo4W"
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     # 'django.contrib.gis',
     'leaflet',
     'djgeojson',
@@ -62,7 +63,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ORIGIN_WHITELIST = [
+#     'localhost:80',
+#     'localhost:8000',
+#     '127.0.0.1:8000'
+# ]
 
 ROOT_URLCONF = 'geodjango.urls'
 
@@ -101,12 +111,20 @@ WSGI_APPLICATION = 'geodjango.wsgi.application'
 #     }
 # }
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'geodjango',
+    #     'USER' : 'geo',#svadik_geo
+    #     'PASSWORD' : 'aaa6c650',# &yaDa5Zc
+    #     'HOST' : '127.0.0.1',
+    #     'PORT' : '5432',
+    # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'geodjango',
-        'USER' : 'geo',#svadik_geo
-        'PASSWORD' : 'aaa6c650',# &yaDa5Zc
-        'HOST' : '127.0.0.1',
+        'NAME': 'postgres',
+        'USER' : 'postgres',#svadik_geo
+        'PASSWORD' : 'postgres',# &yaDa5Zc
+        'HOST' : 'db',
         'PORT' : '5432',
     }
 }
@@ -156,3 +174,5 @@ LEAFLET_CONFIG = {
     'MIN_ZOOM': 1,
     'MAX_ZOOM': 20,
 }
+
+django_heroku.settings(locals())
