@@ -10,7 +10,7 @@ pandas==0.25.3
 psycopg2==2.8.4
 python-dateutil==2.8.1
 reverse-geocoder==1.5.1
-scipy==1.4.1
+scipy==1.10.0
 sqlparse==0.3.0
 django-cors-headers==3.3.0
 gunicorn==20.0.4
